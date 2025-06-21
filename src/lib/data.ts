@@ -1,4 +1,4 @@
-import { User, CollaborationRequest, ChatMessage } from './types';
+import { User } from './types';
 
 export const users: User[] = [
   {
@@ -77,46 +77,3 @@ export const users: User[] = [
     ],
   },
 ];
-
-export const entrepreneurs = users.filter(u => u.role === 'entrepreneur');
-export const investors = users.filter(u => u.role === 'investor');
-
-export const messages: ChatMessage[] = [
-    {
-        id: 'msg1',
-        senderId: '3', // Charlie Brown
-        receiverId: '2', // Bob Smith
-        message: 'Hi Bob, really impressed with ConnectSphere. Your background is perfect for this venture. Let\'s chat more.',
-        timestamp: '2024-05-19T15:32:00Z',
-        read: true,
-    },
-    {
-        id: 'msg2',
-        senderId: '2', // Bob Smith
-        receiverId: '3', // Charlie Brown
-        message: 'Hi Charlie, thanks for reaching out! I appreciate the kind words. I\'m available to chat tomorrow afternoon.',
-        timestamp: '2024-05-19T15:45:00Z',
-        read: true,
-    },
-    {
-        id: 'msg3',
-        senderId: '3', // Charlie Brown
-        receiverId: '2', // Bob Smith
-        message: 'Great, how about 2 PM EST?',
-        timestamp: '2024-05-19T16:00:00Z',
-        read: false,
-    },
-     {
-        id: 'msg4',
-        senderId: '1', // Alice Johnson
-        receiverId: '4', // Diana Prince
-        message: 'Diana, your work with Healthera is inspiring. While it\'s not a fit for my current thesis, I wish you the best of luck.',
-        timestamp: '2024-05-18T11:05:00Z',
-        read: true,
-    },
-];
-
-export function getUserById(id: string | null) {
-    if (!id) return null;
-    return users.find(user => user.id === id) || null;
-}

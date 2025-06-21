@@ -77,7 +77,7 @@ function DashboardNav({ user }: { user: User }) {
         <SidebarMenuButton
           asChild
         >
-          <Link href="/chat/1">
+          <Link href="/chat">
             <MessageSquare />
             Chat
           </Link>
@@ -126,7 +126,7 @@ function MobileNav({ user }: { user: User }) {
             Profile
           </Link>
           <Link
-            href="/chat/1"
+            href="/chat"
             className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
           >
             <MessageSquare className="h-5 w-5" />
