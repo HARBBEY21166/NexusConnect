@@ -1,16 +1,34 @@
+
+"use client";
+
 import { User } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Edit } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface ProfileHeaderProps {
   user: User;
 }
 
 export function ProfileHeader({ user }: ProfileHeaderProps) {
-  // A mock check to see if this is the current user's profile
-  const isCurrentUser = typeof window !== 'undefined' && JSON.parse(localStorage.getItem('nexus-user') || '{}').id === user.id;
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+
+  useEffect(() => {
+    const authDataString = localStorage.getItem('nexus-auth');
+    if (authDataString) {
+      try {
+        const authData = JSON.parse(authDataString);
+        if (authData?.user?.id === user.id) {
+          setIsCurrentUser(true);
+        }
+      } catch (error) {
+        console.error("Failed to parse auth data from localStorage", error);
+      }
+    }
+  }, [user.id]);
+
 
   return (
     <div className="relative">

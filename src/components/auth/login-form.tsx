@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -15,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +28,6 @@ const formSchema = z.object({
 
 export function LoginForm() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,33 +39,47 @@ export function LoginForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
-        // Mock authentication
-        console.log("Login attempt with:", values);
-        
-        // In a real app, you'd call a backend API.
-        // Here, we simulate a successful login and store a mock token/user info.
-        setTimeout(() => {
-            const role = searchParams.get('role') || 'investor';
-            // Simple mock: based on email, we decide the user, otherwise default.
-            const isInvestor = values.email.includes("investor") || role === 'investor';
-            const user = {
-                id: isInvestor ? '1' : '2',
-                email: values.email,
-                role: isInvestor ? 'investor' : 'entrepreneur',
-            };
-
-            localStorage.setItem("nexus-user", JSON.stringify(user));
-            
-            toast({
-                title: "Login Successful",
-                description: "Welcome back!",
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values),
             });
 
-            router.push(`/dashboard/${user.role}`);
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                const authData = {
+                    user: data.user,
+                    token: data.token,
+                };
+                localStorage.setItem("nexus-auth", JSON.stringify(authData));
+                
+                toast({
+                    title: "Login Successful",
+                    description: "Welcome back!",
+                });
+
+                router.push(`/dashboard/${data.user.role}`);
+            } else {
+                toast({
+                    title: "Login Failed",
+                    description: data.message || "Invalid credentials.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            toast({
+                title: "Login Failed",
+                description: "An unexpected error occurred.",
+                variant: "destructive",
+            });
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     }
 
     return (

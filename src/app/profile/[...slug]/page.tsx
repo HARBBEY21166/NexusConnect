@@ -1,13 +1,36 @@
-import { getUserById } from '@/lib/data';
+
 import { notFound } from 'next/navigation';
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileDetails } from '@/components/profile/profile-details';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProfileOptimizer } from '@/components/profile/profile-optimizer';
+import type { User } from '@/lib/types';
+import dbConnect from '@/lib/db';
+import UserModel from '@/models/User.model';
 
-export default function ProfilePage({ params }: { params: { slug: string[] } }) {
+async function getProfileUser(id: string): Promise<User | null> {
+    try {
+        await dbConnect();
+        const user = await UserModel.findById(id).lean();
+        if (!user) return null;
+
+        const userObject = JSON.parse(JSON.stringify(user));
+        userObject.id = userObject._id.toString();
+        delete userObject._id;
+        delete userObject.__v;
+        delete userObject.password;
+        
+        return userObject;
+    } catch (error) {
+        console.error("Failed to fetch user from DB", error);
+        return null;
+    }
+}
+
+export default async function ProfilePage({ params }: { params: { slug: string[] } }) {
   const [role, id] = params.slug;
-  const user = getUserById(id);
+  
+  const user = await getProfileUser(id);
 
   if (!user || user.role !== role) {
     notFound();
@@ -27,7 +50,7 @@ export default function ProfilePage({ params }: { params: { slug: string[] } }) 
                     <CardTitle>AI Profile Polish</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ProfileOptimizer currentBio={user.bio} />
+                    <ProfileOptimizer currentBio={user.bio || ''} />
                 </CardContent>
             </Card>
           )}

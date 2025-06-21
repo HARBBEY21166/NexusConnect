@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -19,9 +20,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarFooter,
-  useSidebar,
-  SidebarInset,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -36,19 +34,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useRouter } from "next/navigation";
-import { User, getUserById } from "@/lib/data";
+import { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type NexusUser = {
-  id: string;
-  role: 'investor' | 'entrepreneur';
+type AuthData = {
+  user: User;
+  token: string;
 }
 
 function DashboardNav({ user }: { user: User }) {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("nexus-user");
+    localStorage.removeItem("nexus-auth");
     router.push("/login");
   };
 
@@ -143,7 +141,7 @@ function MobileNav({ user }: { user: User }) {
 function UserMenu({ user }: { user: User }) {
     const router = useRouter();
     const handleLogout = () => {
-        localStorage.removeItem("nexus-user");
+        localStorage.removeItem("nexus-auth");
         router.push("/login");
     };
 
@@ -212,13 +210,17 @@ export default function DashboardLayout({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("nexus-user");
-    if (storedUser) {
-      const parsedUser: NexusUser = JSON.parse(storedUser);
-      const fullUser = getUserById(parsedUser.id);
-      if(fullUser) {
-          setUser(fullUser);
-      } else {
+    const authDataString = localStorage.getItem("nexus-auth");
+    if (authDataString) {
+      try {
+        const authData: AuthData = JSON.parse(authDataString);
+        if (authData.user && authData.token) {
+            setUser(authData.user);
+        } else {
+            router.push("/login");
+        }
+      } catch (error) {
+        console.error("Failed to parse auth data", error);
         router.push("/login");
       }
     } else {
@@ -250,7 +252,7 @@ export default function DashboardLayout({
   }
   
   if (!user) {
-    return null; // Or a redirect component
+    return null;
   }
 
   return (

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -56,21 +57,40 @@ export function RegisterForm() {
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
-        // Mock registration
-        console.log("Registration attempt with:", values);
-        
-        // In a real app, you'd call a backend API.
-        // Here, we simulate a successful registration and redirect to login.
-        setTimeout(() => {
-             toast({
-                title: "Account Created!",
-                description: "Please log in to continue.",
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values),
             });
-            router.push(`/login?role=${values.role}`);
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast({
+                    title: "Account Created!",
+                    description: "Please log in to continue.",
+                });
+                router.push(`/login?role=${values.role}`);
+            } else {
+                 toast({
+                    title: "Registration Failed",
+                    description: data.message || "An error occurred.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            toast({
+                title: "Registration Failed",
+                description: "An unexpected error occurred.",
+                variant: "destructive",
+            });
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     }
 
     return (
