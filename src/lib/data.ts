@@ -81,36 +81,6 @@ export const users: User[] = [
 export const entrepreneurs = users.filter(u => u.role === 'entrepreneur');
 export const investors = users.filter(u => u.role === 'investor');
 
-export const requests: CollaborationRequest[] = [
-  {
-    id: 'req1',
-    investorId: '1',
-    investorName: 'Alice Johnson',
-    investorAvatarUrl: 'https://placehold.co/100x100.png',
-    entrepreneurId: '2',
-    status: 'pending',
-    timestamp: '2024-05-20T10:00:00Z',
-  },
-  {
-    id: 'req2',
-    investorId: '3',
-    investorName: 'Charlie Brown',
-    investorAvatarUrl: 'https://placehold.co/100x100.png',
-    entrepreneurId: '2',
-    status: 'accepted',
-    timestamp: '2024-05-19T15:30:00Z',
-  },
-   {
-    id: 'req3',
-    investorId: '1',
-    investorName: 'Alice Johnson',
-    investorAvatarUrl: 'https://placehold.co/100x100.png',
-    entrepreneurId: '4',
-    status: 'rejected',
-    timestamp: '2024-05-18T11:00:00Z',
-  },
-];
-
 export const messages: ChatMessage[] = [
     {
         id: 'msg1',

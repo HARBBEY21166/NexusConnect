@@ -4,30 +4,111 @@
 import { User } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Edit } from 'lucide-react';
+import { MessageSquare, Edit, Handshake, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileHeaderProps {
   user: User;
 }
 
+type CurrentUser = {
+  id: string;
+  role: 'investor' | 'entrepreneur';
+}
+
 export function ProfileHeader({ user }: ProfileHeaderProps) {
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const authDataString = localStorage.getItem('nexus-auth');
     if (authDataString) {
       try {
         const authData = JSON.parse(authDataString);
-        if (authData?.user?.id === user.id) {
-          setIsCurrentUser(true);
+        if (authData?.user) {
+          setCurrentUser({ id: authData.user.id, role: authData.user.role });
         }
       } catch (error) {
         console.error("Failed to parse auth data from localStorage", error);
       }
     }
-  }, [user.id]);
+  }, []);
+
+  const handleRequestCollaboration = async () => {
+    setIsRequesting(true);
+    try {
+        const authDataString = localStorage.getItem("nexus-auth");
+        if (!authDataString) throw new Error("You must be logged in to send a request.");
+        
+        const { token } = JSON.parse(authDataString);
+
+        const response = await fetch('/api/requests', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ entrepreneurId: user.id })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            toast({
+                title: "Request Sent!",
+                description: `Your collaboration request to ${user.name} has been sent.`,
+            });
+        } else {
+            throw new Error(data.message || "Failed to send request.");
+        }
+    } catch (error: any) {
+        toast({
+            title: "Request Failed",
+            description: error.message,
+            variant: "destructive"
+        });
+    } finally {
+        setIsRequesting(false);
+    }
+  };
+
+  const isCurrentUserProfile = currentUser?.id === user.id;
+  const canRequestCollaboration = currentUser?.role === 'investor' && user.role === 'entrepreneur';
+
+  const renderActionButtons = () => {
+    if (isCurrentUserProfile) {
+      return (
+        <Button>
+          <Edit className="mr-2 h-4 w-4" />
+          Edit Profile
+        </Button>
+      );
+    }
+
+    const buttons = [];
+    if (canRequestCollaboration) {
+      buttons.push(
+        <Button key="request" onClick={handleRequestCollaboration} disabled={isRequesting}>
+          {isRequesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Handshake className="mr-2 h-4 w-4" />}
+          Request Collaboration
+        </Button>
+      );
+    }
+
+    buttons.push(
+        <Button key="message" asChild variant="outline">
+            <Link href={`/chat/${user.id}`}>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Message
+            </Link>
+        </Button>
+    )
+
+    return buttons;
+  };
 
 
   return (
@@ -44,19 +125,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             <p className="text-sm capitalize text-muted-foreground">{user.role}</p>
           </div>
           <div className="flex gap-2">
-            {isCurrentUser ? (
-              <Button>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Profile
-              </Button>
-            ) : (
-                <Button asChild>
-                    <Link href={`/chat/${user.id}`}>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Message
-                    </Link>
-                </Button>
-            )}
+            {renderActionButtons()}
           </div>
         </div>
       </div>
