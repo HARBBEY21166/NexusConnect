@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster";
-import { Inter, Source_Code_Pro } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -10,11 +10,12 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const sourceCodePro = Source_Code_Pro({
+const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-source-code-pro',
+  variable: '--font-playfair-display',
 });
+
 
 export const metadata: Metadata = {
   title: 'NexusConnect',
@@ -32,7 +33,7 @@ export default function RootLayout({
         className={cn(
           'min-h-screen bg-background font-body antialiased',
           inter.variable,
-          sourceCodePro.variable
+          playfairDisplay.variable
         )}
       >
         {children}
