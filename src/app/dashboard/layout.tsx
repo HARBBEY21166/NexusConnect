@@ -47,6 +47,7 @@ type AuthData = {
 
 function DashboardNav({ user }: { user: User }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     localStorage.removeItem("nexus-auth");
@@ -58,7 +59,7 @@ function DashboardNav({ user }: { user: User }) {
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
-          isActive={true} // Simplified for example
+          isActive={pathname === `/dashboard/${user.role}`}
         >
           <Link href={`/dashboard/${user.role}`}>
             <LayoutDashboard />
@@ -68,7 +69,7 @@ function DashboardNav({ user }: { user: User }) {
       </SidebarMenuItem>
       {user.role === 'entrepreneur' && (
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
+          <SidebarMenuButton asChild isActive={pathname === '/dashboard/investor-discovery'}>
             <Link href="/dashboard/investor-discovery">
               <Search />
               Discover Investors
@@ -76,9 +77,20 @@ function DashboardNav({ user }: { user: User }) {
           </SidebarMenuButton>
         </SidebarMenuItem>
       )}
+       {user.role === 'investor' && (
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild isActive={pathname === '/dashboard/investor'}>
+            <Link href="/dashboard/investor">
+              <Search />
+              Discover Entrepreneurs
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
+           isActive={pathname === `/dashboard/profile/${user.role}/${user.id}`}
         >
           <Link href={`/dashboard/profile/${user.role}/${user.id}`}>
             <UserIcon />
@@ -89,6 +101,7 @@ function DashboardNav({ user }: { user: User }) {
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
+           isActive={pathname.startsWith('/dashboard/chat')}
         >
           <Link href="/dashboard/chat">
             <MessageSquare />
@@ -107,6 +120,9 @@ function DashboardNav({ user }: { user: User }) {
 }
 
 function MobileNav({ user }: { user: User }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -126,7 +142,7 @@ function MobileNav({ user }: { user: User }) {
           </Link>
           <Link
             href={`/dashboard/${user.role}`}
-            className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === `/dashboard/${user.role}`})}
           >
             <LayoutDashboard className="h-5 w-5" />
             Dashboard
@@ -134,22 +150,31 @@ function MobileNav({ user }: { user: User }) {
            {user.role === 'entrepreneur' && (
              <Link
               href="/dashboard/investor-discovery"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+              className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === '/dashboard/investor-discovery' })}
             >
               <Search className="h-5 w-5" />
               Discover Investors
             </Link>
           )}
+           {user.role === 'investor' && (
+             <Link
+              href="/dashboard/investor"
+               className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === '/dashboard/investor' })}
+            >
+              <Search className="h-5 w-5" />
+              Discover Entrepreneurs
+            </Link>
+          )}
            <Link
             href={`/dashboard/profile/${user.role}/${user.id}`}
-            className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname.startsWith('/dashboard/profile')})}
           >
             <UserIcon className="h-5 w-5" />
             Profile
           </Link>
           <Link
             href="/dashboard/chat"
-            className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname.startsWith('/dashboard/chat')})}
           >
             <MessageSquare className="h-5 w-5" />
             Chat
@@ -203,7 +228,6 @@ function PageHeader({ user }: { user: User | null }) {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
 
   useEffect(() => {
-    // When the page changes, clear the search term if not on a searchable page
     const isSearchable = pathname === '/dashboard/investor' || pathname === '/dashboard/investor-discovery';
     if (isSearchable) {
        setSearchTerm(searchParams.get("q") || "");
@@ -214,13 +238,12 @@ function PageHeader({ user }: { user: User | null }) {
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const params = new URLSearchParams(searchParams);
+    const targetPath = user?.role === 'entrepreneur' ? '/dashboard/investor-discovery' : '/dashboard/investor';
+    const params = new URLSearchParams();
     if (searchTerm) {
       params.set("q", searchTerm);
-    } else {
-      params.delete("q");
     }
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${targetPath}?${params.toString()}`);
   };
 
 
@@ -247,7 +270,7 @@ function PageHeader({ user }: { user: User | null }) {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search profiles..."
+                  placeholder={user.role === 'investor' ? "Search entrepreneurs..." : "Search investors..."}
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -313,6 +336,7 @@ export default function DashboardLayout({
   }
   
   if (!user) {
+    // This can happen briefly before the redirect to /login
     return null;
   }
 
