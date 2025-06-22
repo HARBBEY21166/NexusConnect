@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const search = searchParams.get('search');
+        const interests = searchParams.get('interests');
 
         const query: any = { role: 'investor' };
 
@@ -17,8 +18,15 @@ export async function GET(request: NextRequest) {
             query.$or = [
                 { name: searchRegex },
                 { bio: searchRegex },
-                { investmentInterests: searchRegex },
             ];
+        }
+
+        if (interests) {
+            const interestsArray = interests.split(',').map(item => item.trim()).filter(Boolean);
+            if (interestsArray.length > 0) {
+                // Use $all to ensure all selected interests are present
+                query.investmentInterests = { $all: interestsArray };
+            }
         }
 
         const investors = await UserModel.find(query);
