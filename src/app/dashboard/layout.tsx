@@ -63,6 +63,16 @@ function DashboardNav({ user }: { user: User }) {
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
+      {user.role === 'entrepreneur' && (
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href="/dashboard/investor-discovery">
+              <Search />
+              Discover Investors
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
@@ -118,6 +128,15 @@ function MobileNav({ user }: { user: User }) {
             <LayoutDashboard className="h-5 w-5" />
             Dashboard
           </Link>
+           {user.role === 'entrepreneur' && (
+             <Link
+              href="/dashboard/investor-discovery"
+              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+            >
+              <Search className="h-5 w-5" />
+              Discover Investors
+            </Link>
+          )}
            <Link
             href={`/dashboard/profile/${user.role}/${user.id}`}
             className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
