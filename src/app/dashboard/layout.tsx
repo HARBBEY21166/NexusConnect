@@ -35,7 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "next-themes";
@@ -197,6 +197,33 @@ function UserMenu({ user }: { user: User }) {
 }
 
 function PageHeader({ user }: { user: User | null }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+
+  useEffect(() => {
+    // When the page changes, clear the search term if not on a searchable page
+    const isSearchable = pathname === '/dashboard/investor' || pathname === '/dashboard/investor-discovery';
+    if (isSearchable) {
+       setSearchTerm(searchParams.get("q") || "");
+    } else {
+       setSearchTerm("");
+    }
+  }, [searchParams, pathname]);
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams);
+    if (searchTerm) {
+      params.set("q", searchTerm);
+    } else {
+      params.delete("q");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+
   if (!user) {
     return (
         <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6">
@@ -208,20 +235,26 @@ function PageHeader({ user }: { user: User | null }) {
     );
   }
 
+  const isSearchablePage = pathname === '/dashboard/investor' || pathname === '/dashboard/investor-discovery';
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6">
         <MobileNav user={user} />
         <div className="w-full flex-1">
-          <form>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search profiles..."
-                className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-              />
-            </div>
-          </form>
+          {isSearchablePage && (
+            <form onSubmit={handleSearchSubmit}>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search profiles..."
+                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </form>
+          )}
         </div>
         <UserMenu user={user} />
     </header>

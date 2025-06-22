@@ -5,18 +5,21 @@ import { EntrepreneurCard } from "@/components/dashboard/entrepreneur-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/lib/types";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function InvestorDashboard() {
   const [entrepreneurs, setEntrepreneurs] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('q');
 
   useEffect(() => {
     const fetchEntrepreneurs = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('/api/entrepreneurs');
+        const response = await fetch(`/api/entrepreneurs${searchQuery ? `?search=${searchQuery}` : ''}`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -33,7 +36,7 @@ export default function InvestorDashboard() {
     };
 
     fetchEntrepreneurs();
-  }, []);
+  }, [searchQuery]);
 
   return (
     <div>
@@ -72,7 +75,10 @@ export default function InvestorDashboard() {
                     <EntrepreneurCard key={entrepreneur.id} entrepreneur={entrepreneur} />
                 ))
             ) : (
-                <p>No entrepreneurs found.</p>
+                <div className="col-span-full text-center text-muted-foreground">
+                    <p>No entrepreneurs found.</p>
+                    {searchQuery && <p>Try adjusting your search terms.</p>}
+                </div>
             )}
         </div>
       )}

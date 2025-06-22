@@ -5,18 +5,21 @@ import { InvestorCard } from "@/components/dashboard/investor-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/lib/types";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function InvestorDiscoveryPage() {
   const [investors, setInvestors] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('q');
 
   useEffect(() => {
     const fetchInvestors = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('/api/investors');
+        const response = await fetch(`/api/investors${searchQuery ? `?search=${searchQuery}` : ''}`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -33,7 +36,7 @@ export default function InvestorDiscoveryPage() {
     };
 
     fetchInvestors();
-  }, []);
+  }, [searchQuery]);
 
   return (
     <div>
@@ -72,7 +75,10 @@ export default function InvestorDiscoveryPage() {
                     <InvestorCard key={investor.id} investor={investor} />
                 ))
             ) : (
-                <p>No investors found.</p>
+                <div className="col-span-full text-center text-muted-foreground">
+                    <p>No investors found.</p>
+                    {searchQuery && <p>Try adjusting your search terms.</p>}
+                </div>
             )}
         </div>
       )}

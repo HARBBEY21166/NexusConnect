@@ -1,13 +1,27 @@
 
 import dbConnect from '@/lib/db';
 import UserModel from '@/models/User.model';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     await dbConnect();
 
     try {
-        const investors = await UserModel.find({ role: 'investor' });
+        const { searchParams } = new URL(request.url);
+        const search = searchParams.get('search');
+
+        const query: any = { role: 'investor' };
+
+        if (search) {
+            const searchRegex = new RegExp(search, 'i'); // case-insensitive
+            query.$or = [
+                { name: searchRegex },
+                { bio: searchRegex },
+                { investmentInterests: searchRegex },
+            ];
+        }
+
+        const investors = await UserModel.find(query);
         
         return NextResponse.json({ success: true, investors: investors.map(i => i.toObject()) }, { status: 200 });
     } catch (error) {
