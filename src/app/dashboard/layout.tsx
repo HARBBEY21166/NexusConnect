@@ -11,6 +11,8 @@ import {
   MessageSquare,
   Search,
   Menu,
+  Moon,
+  Sun,
 } from "lucide-react";
 import {
   SidebarProvider,
@@ -36,6 +38,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useRouter } from "next/navigation";
 import { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTheme } from "next-themes";
 
 type AuthData = {
   user: User;
@@ -159,6 +162,8 @@ function MobileNav({ user }: { user: User }) {
 
 function UserMenu({ user }: { user: User }) {
     const router = useRouter();
+    const { setTheme, theme } = useTheme();
+
     const handleLogout = () => {
         localStorage.removeItem("nexus-auth");
         router.push("/login");
@@ -179,7 +184,11 @@ function UserMenu({ user }: { user: User }) {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.push(`/dashboard/profile/${user.role}/${user.id}`)}>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                 <DropdownMenuItem onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+                    <Sun className="h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    Toggle Theme
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
