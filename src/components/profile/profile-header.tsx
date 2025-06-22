@@ -100,7 +100,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
 
     buttons.push(
         <Button key="message" asChild variant="outline">
-            <Link href={`/chat/${user.id}`}>
+            <Link href={`/dashboard/chat/${user.id}`}>
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Message
             </Link>

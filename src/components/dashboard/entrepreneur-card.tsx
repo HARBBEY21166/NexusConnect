@@ -1,3 +1,4 @@
+
 import { User } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -38,13 +39,13 @@ export function EntrepreneurCard({ entrepreneur }: EntrepreneurCardProps) {
       </CardContent>
       <CardFooter className="flex gap-2">
         <Button asChild className="flex-1">
-          <Link href={`/profile/entrepreneur/${entrepreneur.id}`}>
+          <Link href={`/dashboard/profile/entrepreneur/${entrepreneur.id}`}>
             <ArrowUpRight className="mr-2 h-4 w-4" />
             View Profile
           </Link>
         </Button>
         <Button asChild variant="outline" className="flex-1">
-            <Link href={`/chat/${entrepreneur.id}`}>
+            <Link href={`/dashboard/chat/${entrepreneur.id}`}>
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Message
             </Link>

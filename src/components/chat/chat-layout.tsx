@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
@@ -233,7 +234,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
               contacts.map(contact => (
                 <Link
                   key={contact.id}
-                  href={`/chat/${contact.id}`}
+                  href={`/dashboard/chat/${contact.id}`}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground',
                     selectedUser?.id === contact.id && 'bg-accent text-accent-foreground'
@@ -307,7 +308,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
                       >
                         <p>{msg.message}</p>
                         <p className={cn("text-xs mt-1", msg.senderId === loggedInUser?.id ? 'text-primary-foreground/70' : 'text-muted-foreground/70' )}>
-                            {msg.timestamp && format(new Date(msg.timestamp), 'p')}
+                            {msg.timestamp && new Date(msg.timestamp).getTime() ? format(new Date(msg.timestamp), 'p') : ''}
                         </p>
                       </div>
                     </div>

@@ -67,7 +67,7 @@ function DashboardNav({ user }: { user: User }) {
         <SidebarMenuButton
           asChild
         >
-          <Link href={`/profile/${user.role}/${user.id}`}>
+          <Link href={`/dashboard/profile/${user.role}/${user.id}`}>
             <UserIcon />
             Profile
           </Link>
@@ -77,7 +77,7 @@ function DashboardNav({ user }: { user: User }) {
         <SidebarMenuButton
           asChild
         >
-          <Link href="/chat">
+          <Link href="/dashboard/chat">
             <MessageSquare />
             Chat
           </Link>
@@ -119,14 +119,14 @@ function MobileNav({ user }: { user: User }) {
             Dashboard
           </Link>
            <Link
-            href={`/profile/${user.role}/${user.id}`}
+            href={`/dashboard/profile/${user.role}/${user.id}`}
             className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
           >
             <UserIcon className="h-5 w-5" />
             Profile
           </Link>
           <Link
-            href="/chat"
+            href="/dashboard/chat"
             className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
           >
             <MessageSquare className="h-5 w-5" />
@@ -159,7 +159,7 @@ function UserMenu({ user }: { user: User }) {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push(`/profile/${user.role}/${user.id}`)}>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push(`/dashboard/profile/${user.role}/${user.id}`)}>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
