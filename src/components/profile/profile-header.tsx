@@ -8,6 +8,9 @@ import { MessageSquare, Edit, Handshake, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { EditProfileForm } from './edit-profile-form';
 
 interface ProfileHeaderProps {
   user: User;
@@ -21,7 +24,9 @@ type CurrentUser = {
 export function ProfileHeader({ user }: ProfileHeaderProps) {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [isRequesting, setIsRequesting] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     const authDataString = localStorage.getItem('nexus-auth');
@@ -74,6 +79,15 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
         setIsRequesting(false);
     }
   };
+  
+  const handleUpdateSuccess = () => {
+    setIsEditDialogOpen(false);
+    toast({
+        title: "Profile Updated",
+        description: "Your changes have been saved successfully.",
+    });
+    router.refresh();
+  }
 
   const isCurrentUserProfile = currentUser?.id === user.id;
   const canRequestCollaboration = currentUser?.role === 'investor' && user.role === 'entrepreneur';
@@ -81,10 +95,20 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
   const renderActionButtons = () => {
     if (isCurrentUserProfile) {
       return (
-        <Button>
-          <Edit className="mr-2 h-4 w-4" />
-          Edit Profile
-        </Button>
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Profile
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Edit Profile</DialogTitle>
+            </DialogHeader>
+            <EditProfileForm user={user} onUpdateSuccess={handleUpdateSuccess} />
+          </DialogContent>
+        </Dialog>
       );
     }
 

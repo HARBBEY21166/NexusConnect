@@ -58,28 +58,41 @@ export async function GET(request: NextRequest) {
         const userId = decoded.userId;
         const userRole = decoded.role;
         
-        let requests;
+        let formattedRequests;
 
         if (userRole === 'entrepreneur') {
-            requests = await RequestModel.find({ entrepreneurId: userId }).populate({ path: 'investorId', model: UserModel });
+            const requests = await RequestModel.find({ entrepreneurId: userId }).populate({ path: 'investorId', model: UserModel });
+            formattedRequests = requests.map(req => {
+                const investor = req.investorId as any;
+                if (!investor?._id) return null;
+                return {
+                    id: req._id.toString(),
+                    investorId: investor._id.toString(),
+                    investorName: investor.name,
+                    investorAvatarUrl: investor.avatarUrl,
+                    entrepreneurId: req.entrepreneurId.toString(),
+                    status: req.status,
+                    timestamp: req.createdAt.toISOString(),
+                };
+            }).filter(Boolean);
         } else if (userRole === 'investor') {
-            requests = await RequestModel.find({ investorId: userId }).populate({ path: 'entrepreneurId', model: UserModel });
+            const requests = await RequestModel.find({ investorId: userId }).populate({ path: 'entrepreneurId', model: UserModel });
+            formattedRequests = requests.map(req => {
+                const entrepreneur = req.entrepreneurId as any;
+                if (!entrepreneur?._id) return null;
+                return {
+                    id: req._id.toString(),
+                    investorId: req.investorId.toString(),
+                    entrepreneurId: entrepreneur._id.toString(),
+                    entrepreneurName: entrepreneur.name,
+                    entrepreneurAvatarUrl: entrepreneur.avatarUrl,
+                    status: req.status,
+                    timestamp: req.createdAt.toISOString(),
+                };
+            }).filter(Boolean);
         } else {
             return NextResponse.json({ success: false, message: 'Invalid role' }, { status: 400 });
         }
-
-        const formattedRequests = requests.map(req => {
-            const investor = req.investorId as any;
-            return {
-                id: req._id.toString(),
-                investorId: investor._id.toString(),
-                investorName: investor.name,
-                investorAvatarUrl: investor.avatarUrl,
-                entrepreneurId: req.entrepreneurId.toString(),
-                status: req.status,
-                timestamp: req.createdAt.toISOString(),
-            };
-        });
 
         return NextResponse.json({ success: true, requests: formattedRequests }, { status: 200 });
 
