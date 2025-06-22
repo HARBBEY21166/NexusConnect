@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
@@ -308,7 +307,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
                       >
                         <p>{msg.message}</p>
                         <p className={cn("text-xs mt-1", msg.senderId === loggedInUser?.id ? 'text-primary-foreground/70' : 'text-muted-foreground/70' )}>
-                            {format(new Date(msg.timestamp), 'p')}
+                            {msg.timestamp && format(new Date(msg.timestamp), 'p')}
                         </p>
                       </div>
                     </div>
