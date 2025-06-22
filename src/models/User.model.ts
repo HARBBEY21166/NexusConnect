@@ -1,3 +1,4 @@
+
 import mongoose, { Schema, Document, models, Model } from 'mongoose';
 import type { User as UserType } from '@/lib/types';
 
@@ -28,7 +29,7 @@ const UserSchema = new Schema<UserDocument>({
     },
     role: {
         type: String,
-        enum: ['investor', 'entrepreneur'],
+        enum: ['investor', 'entrepreneur', 'admin'],
         required: [true, 'Please select a role.'],
     },
     avatarUrl: {

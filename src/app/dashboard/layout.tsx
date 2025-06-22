@@ -39,6 +39,8 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { User } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+
 
 type AuthData = {
   user: User;
@@ -53,36 +55,38 @@ function DashboardNav({ user }: { user: User }) {
     localStorage.removeItem("nexus-auth");
     router.push("/login");
   };
+  
+  const dashboardPath = user.role === 'admin' ? '/dashboard/admin' : `/dashboard/${user.role}`;
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
-          isActive={pathname === `/dashboard/${user.role}`}
+          isActive={pathname === dashboardPath}
         >
-          <Link href={`/dashboard/${user.role}`}>
+          <Link href={dashboardPath}>
             <LayoutDashboard />
             Dashboard
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
-      {user.role === 'entrepreneur' && (
+      {(user.role === 'entrepreneur' || user.role === 'admin') && (
         <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={pathname === '/dashboard/investor-discovery'}>
             <Link href="/dashboard/investor-discovery">
               <Search />
-              Discover Investors
+              {user.role === 'admin' ? 'All Investors' : 'Discover Investors'}
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       )}
-       {user.role === 'investor' && (
+       {(user.role === 'investor' || user.role === 'admin') && (
         <SidebarMenuItem>
           <SidebarMenuButton asChild isActive={pathname === '/dashboard/investor'}>
             <Link href="/dashboard/investor">
               <Search />
-              Discover Entrepreneurs
+               {user.role === 'admin' ? 'All Entrepreneurs' : 'Discover Entrepreneurs'}
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -90,7 +94,7 @@ function DashboardNav({ user }: { user: User }) {
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
-           isActive={pathname === `/dashboard/profile/${user.role}/${user.id}`}
+           isActive={pathname.startsWith(`/dashboard/profile/`)}
         >
           <Link href={`/dashboard/profile/${user.role}/${user.id}`}>
             <UserIcon />
@@ -122,6 +126,7 @@ function DashboardNav({ user }: { user: User }) {
 function MobileNav({ user }: { user: User }) {
   const router = useRouter();
   const pathname = usePathname();
+  const dashboardPath = user.role === 'admin' ? '/dashboard/admin' : `/dashboard/${user.role}`;
 
   return (
     <Sheet>
@@ -141,28 +146,28 @@ function MobileNav({ user }: { user: User }) {
             <span>NexusConnect</span>
           </Link>
           <Link
-            href={`/dashboard/${user.role}`}
-            className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === `/dashboard/${user.role}`})}
+            href={dashboardPath}
+            className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === dashboardPath})}
           >
             <LayoutDashboard className="h-5 w-5" />
             Dashboard
           </Link>
-           {user.role === 'entrepreneur' && (
+           {(user.role === 'entrepreneur' || user.role === 'admin') && (
              <Link
               href="/dashboard/investor-discovery"
               className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === '/dashboard/investor-discovery' })}
             >
               <Search className="h-5 w-5" />
-              Discover Investors
+              {user.role === 'admin' ? 'All Investors' : 'Discover Investors'}
             </Link>
           )}
-           {user.role === 'investor' && (
+           {(user.role === 'investor' || user.role === 'admin') && (
              <Link
               href="/dashboard/investor"
                className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === '/dashboard/investor' })}
             >
               <Search className="h-5 w-5" />
-              Discover Entrepreneurs
+              {user.role === 'admin' ? 'All Entrepreneurs' : 'Discover Entrepreneurs'}
             </Link>
           )}
            <Link

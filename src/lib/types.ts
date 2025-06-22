@@ -1,4 +1,5 @@
-export type UserRole = 'investor' | 'entrepreneur';
+
+export type UserRole = 'investor' | 'entrepreneur' | 'admin';
 
 export type User = {
   id: string;
@@ -7,6 +8,7 @@ export type User = {
   role: UserRole;
   avatarUrl: string;
   bio: string;
+  createdAt?: string;
   startupName?: string;
   startupDescription?: string;
   fundingNeeds?: string;
