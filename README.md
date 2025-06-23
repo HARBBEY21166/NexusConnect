@@ -6,6 +6,7 @@ NexusConnect is a dynamic, full-stack platform designed to bridge the gap betwee
 
 - **Dual User Roles**: Separate, tailored experiences for **Investors** and **Entrepreneurs**.
 - **Secure Authentication**: Complete auth flow including registration, login, and password reset using JWT.
+- **Guided Onboarding**: A streamlined process for new users to complete their profiles upon their first login, ensuring a high rate of profile completion.
 - **Role-Based Dashboards**: At-a-glance overview of relevant activities, requests, and analytics.
 - **Advanced Profile Discovery**:
   - Search for users by name or keywords.
