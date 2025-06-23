@@ -23,7 +23,7 @@ export async function PUT(request: NextRequest) {
         
         // Convert comma-separated string to array for interests
         if (typeof body.investmentInterests === 'string') {
-            body.investmentInterests = body.investmentInterests.split(',').map(item => item.trim()).filter(Boolean);
+            body.investmentInterests = body.investmentInterests.split(',').map((item: string) => item.trim()).filter(Boolean);
         }
 
         const updatedUser = await UserModel.findByIdAndUpdate(userId, body, { new: true });
