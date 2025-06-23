@@ -62,7 +62,7 @@ export function LoginForm() {
                     description: "Welcome back!",
                 });
 
-                if (!data.user.hasCompletedOnboarding) {
+                if (data.user.hasCompletedOnboarding === false) {
                     router.push('/onboarding');
                 } else {
                     router.push(`/dashboard/${data.user.role}`);

@@ -18,8 +18,8 @@ export default function OnboardingPage() {
         const authDataString = localStorage.getItem("nexus-auth");
         if (authDataString) {
             const { user: authUser } = JSON.parse(authDataString);
-            if (authUser.hasCompletedOnboarding) {
-                // If they are already onboarded, send them to dashboard
+            if (authUser.hasCompletedOnboarding !== false) {
+                // If they are already onboarded, or are an old user, send them to dashboard
                 router.replace(`/dashboard/${authUser.role}`);
             } else {
                 setUser(authUser);
