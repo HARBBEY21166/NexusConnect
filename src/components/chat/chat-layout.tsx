@@ -21,7 +21,7 @@ interface ChatLayoutProps {
 type AuthUser = {
   id: string;
   name: string;
-  role: 'investor' | 'entrepreneur';
+  role: 'investor' | 'entrepreneur' | 'admin';
   avatarUrl: string;
 }
 
@@ -269,7 +269,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
             </div>
             <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
               <div className="space-y-4">
-                {isLoadingMessages ? (
+                {isLoadingMessages || !loggedInUser ? (
                     <div className="space-y-4">
                          <div className="flex items-end gap-2 justify-start">
                             <Skeleton className="h-8 w-8 rounded-full" />
