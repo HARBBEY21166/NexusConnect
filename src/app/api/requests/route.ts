@@ -67,10 +67,10 @@ export async function GET(request: NextRequest) {
             const requests = await RequestModel.find({ entrepreneurId: userId }).populate({ path: 'investorId', model: UserModel });
             formattedRequests = requests.map(req => {
                 const investor = req.investorId as any;
-                if (!investor?._id) return null;
+                if (!investor?.id) return null;
                 return {
-                    id: req._id.toString(),
-                    investorId: investor._id.toString(),
+                    id: req.id,
+                    investorId: investor.id,
                     investorName: investor.name,
                     investorAvatarUrl: investor.avatarUrl,
                     entrepreneurId: req.entrepreneurId.toString(),
@@ -82,11 +82,11 @@ export async function GET(request: NextRequest) {
             const requests = await RequestModel.find({ investorId: userId }).populate({ path: 'entrepreneurId', model: UserModel });
             formattedRequests = requests.map(req => {
                 const entrepreneur = req.entrepreneurId as any;
-                if (!entrepreneur?._id) return null;
+                if (!entrepreneur?.id) return null;
                 return {
-                    id: req._id.toString(),
+                    id: req.id,
                     investorId: req.investorId.toString(),
-                    entrepreneurId: entrepreneur._id.toString(),
+                    entrepreneurId: entrepreneur.id,
                     entrepreneurName: entrepreneur.name,
                     entrepreneurAvatarUrl: entrepreneur.avatarUrl,
                     status: req.status,
