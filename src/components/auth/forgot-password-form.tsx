@@ -16,33 +16,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
-export function LoginForm() {
-    const router = useRouter();
+export function ForgotPasswordForm() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
-            password: "",
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('/api/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values),
@@ -51,30 +48,19 @@ export function LoginForm() {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                const authData = {
-                    user: data.user,
-                    token: data.token,
-                };
-                localStorage.setItem("nexus-auth", JSON.stringify(authData));
-                
                 toast({
-                    title: "Login Successful",
-                    description: "Welcome back!",
+                    title: "Check your email",
+                    description: data.message,
                 });
-
-                router.push(`/dashboard/${data.user.role}`);
+                setIsSubmitted(true);
             } else {
-                toast({
-                    title: "Login Failed",
-                    description: data.message || "Invalid credentials.",
-                    variant: "destructive",
-                });
+                throw new Error(data.message || "An unexpected error occurred.");
             }
-        } catch (error) {
-            console.error("Login error:", error);
+        } catch (error: any) {
+            console.error("Forgot password error:", error);
             toast({
-                title: "Login Failed",
-                description: "An unexpected error occurred.",
+                title: "Request Failed",
+                description: error.message,
                 variant: "destructive",
             });
         } finally {
@@ -82,15 +68,31 @@ export function LoginForm() {
         }
     }
 
+    if (isSubmitted) {
+        return (
+             <Card>
+                <CardHeader>
+                    <CardTitle>Request Sent</CardTitle>
+                    <CardDescription>If an account exists for the email you entered, you will receive a password reset link shortly.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Link href="/login">
+                        <Button className="w-full">Back to Login</Button>
+                    </Link>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Welcome Back</CardTitle>
-                <CardDescription>Enter your credentials to access your account.</CardDescription>
+                <CardTitle>Forgot Your Password?</CardTitle>
+                <CardDescription>No problem. Enter your email and we'll send you a link to reset it.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
                             name="email"
@@ -104,34 +106,16 @@ export function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <div className="flex justify-between items-center">
-                                        <FormLabel>Password</FormLabel>
-                                        <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline underline-offset-4" prefetch={false}>
-                                            Forgot Password?
-                                        </Link>
-                                    </div>
-                                    <FormControl>
-                                        <Input type="password" placeholder="••••••••" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <Button type="submit" className="w-full" disabled={isLoading}>
                              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                             Sign In
+                             Send Reset Link
                         </Button>
                     </form>
                 </Form>
                 <div className="mt-4 text-center text-sm">
-                    Don't have an account?{" "}
-                    <Link href="/register" className="underline" prefetch={false}>
-                        Register
+                    Remembered your password?{" "}
+                    <Link href="/login" className="underline" prefetch={false}>
+                        Login
                     </Link>
                 </div>
             </CardContent>

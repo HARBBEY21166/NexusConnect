@@ -4,6 +4,8 @@ import type { User as UserType } from '@/lib/types';
 
 type UserDocument = Omit<UserType, 'id'> & Document & {
     password?: string;
+    resetPasswordToken?: string;
+    resetPasswordExpires?: Date;
 };
 
 const PortfolioCompanySchema = new Schema({
@@ -61,7 +63,15 @@ const UserSchema = new Schema<UserDocument>({
     bookmarkedProfiles: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpires: {
+        type: Date,
+        select: false
+    }
 }, {
     timestamps: true,
     toJSON: {

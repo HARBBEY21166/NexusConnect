@@ -15,66 +15,70 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"]
 });
 
-export function LoginForm() {
+export function ResetPasswordForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const [token, setToken] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const urlToken = searchParams.get('token');
+        if (urlToken) {
+            setToken(urlToken);
+        } else {
+            setError("No reset token found. Please request a new reset link.");
+        }
+    }, [searchParams]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            email: "",
             password: "",
+            confirmPassword: "",
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (!token) return;
         setIsLoading(true);
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('/api/auth/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+                body: JSON.stringify({ token, password: values.password }),
             });
 
             const data = await response.json();
 
             if (response.ok && data.success) {
-                const authData = {
-                    user: data.user,
-                    token: data.token,
-                };
-                localStorage.setItem("nexus-auth", JSON.stringify(authData));
-                
                 toast({
-                    title: "Login Successful",
-                    description: "Welcome back!",
+                    title: "Password Reset Successful",
+                    description: "You can now log in with your new password.",
                 });
-
-                router.push(`/dashboard/${data.user.role}`);
+                router.push('/login');
             } else {
-                toast({
-                    title: "Login Failed",
-                    description: data.message || "Invalid credentials.",
-                    variant: "destructive",
-                });
+                 throw new Error(data.message || "Failed to reset password.");
             }
-        } catch (error) {
-            console.error("Login error:", error);
+        } catch (err: any) {
             toast({
-                title: "Login Failed",
-                description: "An unexpected error occurred.",
+                title: "Reset Failed",
+                description: err.message,
                 variant: "destructive",
             });
         } finally {
@@ -82,39 +86,63 @@ export function LoginForm() {
         }
     }
 
+    if (error) {
+        return (
+             <Card>
+                <CardHeader>
+                    <CardTitle>Invalid Link</CardTitle>
+                    <CardDescription>{error}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <Link href="/forgot-password">
+                        <Button className="w-full">Request a New Link</Button>
+                    </Link>
+                </CardContent>
+            </Card>
+        )
+    }
+    
+    if (!token) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Validating...</CardTitle>
+                </CardHeader>
+                <CardContent className="flex justify-center items-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Welcome Back</CardTitle>
-                <CardDescription>Enter your credentials to access your account.</CardDescription>
+                <CardTitle>Set New Password</CardTitle>
+                <CardDescription>Please choose a new password for your account.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="name@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <div className="flex justify-between items-center">
-                                        <FormLabel>Password</FormLabel>
-                                        <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline underline-offset-4" prefetch={false}>
-                                            Forgot Password?
-                                        </Link>
-                                    </div>
+                                    <FormLabel>New Password</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="••••••••" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm New Password</FormLabel>
                                     <FormControl>
                                         <Input type="password" placeholder="••••••••" {...field} />
                                     </FormControl>
@@ -124,16 +152,10 @@ export function LoginForm() {
                         />
                         <Button type="submit" className="w-full" disabled={isLoading}>
                              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                             Sign In
+                             Reset Password
                         </Button>
                     </form>
                 </Form>
-                <div className="mt-4 text-center text-sm">
-                    Don't have an account?{" "}
-                    <Link href="/register" className="underline" prefetch={false}>
-                        Register
-                    </Link>
-                </div>
             </CardContent>
         </Card>
     );
