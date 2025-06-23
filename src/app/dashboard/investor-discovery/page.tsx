@@ -2,14 +2,15 @@
 "use client";
 
 import { InvestorCard } from "@/components/dashboard/investor-card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/lib/types";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Filter } from "lucide-react";
+import { InvestorFilters } from "@/components/dashboard/investor-filters";
 
 export default function InvestorDiscoveryPage() {
   const [investors, setInvestors] = useState<User[]>([]);
@@ -80,49 +81,39 @@ export default function InvestorDiscoveryPage() {
     
     router.replace(`${pathname}?${params.toString()}`);
   };
+  
+  const filterProps = {
+    allInterests,
+    selectedInterests,
+    isLoading,
+    onInterestChange: handleInterestChange,
+  };
 
   return (
     <div className="grid gap-8 md:grid-cols-[280px_1fr]">
        <aside className="hidden md:flex flex-col gap-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Filters</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <h4 className="font-semibold mb-4">Investment Interests</h4>
-                    <div className="space-y-3">
-                        {isLoading ? (
-                             [...Array(5)].map((_, i) => (
-                                <div key={i} className="flex items-center space-x-2">
-                                    <Skeleton className="h-4 w-4" />
-                                    <Skeleton className="h-4 w-24" />
-                                </div>
-                            ))
-                        ) : allInterests.length > 0 ? (
-                           allInterests.map((interest) => (
-                                <div key={interest} className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={`interest-${interest}`}
-                                        checked={selectedInterests.includes(interest)}
-                                        onCheckedChange={(checked) => handleInterestChange(interest, checked)}
-                                    />
-                                    <Label htmlFor={`interest-${interest}`} className="font-normal capitalize cursor-pointer">
-                                        {interest}
-                                    </Label>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-sm text-muted-foreground">No interests to filter by.</p>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+            <InvestorFilters {...filterProps} />
         </aside>
 
       <main>
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
+          <div>
             <h1 className="text-3xl font-bold font-headline">Discover Investors</h1>
             <p className="text-muted-foreground">Find the right partners to fund your vision.</p>
+          </div>
+           <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Filter className="h-4 w-4" />
+                    <span className="sr-only">Open Filters</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <InvestorFilters {...filterProps} />
+                </SheetContent>
+              </Sheet>
+            </div>
         </div>
 
         {isLoading && (

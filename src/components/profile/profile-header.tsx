@@ -139,7 +139,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
     <div className="relative">
       <div className="h-32 w-full rounded-t-lg bg-muted lg:h-48" />
       <div className="p-4 sm:p-6 lg:p-8">
-        <div className="flex items-end gap-6 -mt-16 sm:-mt-20">
+        <div className="flex flex-col sm:flex-row items-end gap-6 -mt-16 sm:-mt-20">
           <Avatar className="h-24 w-24 border-4 border-background sm:h-32 sm:w-32">
             <AvatarImage src={user.avatarUrl} alt={user.name} />
             <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -148,7 +148,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
             <h1 className="text-2xl font-bold font-headline sm:text-3xl">{user.name}</h1>
             <p className="text-sm capitalize text-muted-foreground">{user.role}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex w-full sm:w-auto flex-col items-stretch gap-2 sm:flex-row sm:items-center">
             {renderActionButtons()}
           </div>
         </div>

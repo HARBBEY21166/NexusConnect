@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { SendHorizonal, Search } from 'lucide-react';
+import { SendHorizonal, Search, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 interface ChatLayoutProps {
   selectedUserId: string | null;
@@ -37,6 +38,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
+  const router = useRouter();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const getToken = () => {
@@ -204,8 +206,8 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
   };
 
   return (
-    <div className="grid h-[calc(100vh-120px)] w-full grid-cols-[280px_1fr]">
-      <div className="flex flex-col border-r bg-card">
+    <div className="grid h-[calc(100vh-120px)] w-full md:grid-cols-[280px_1fr]">
+      <div className={cn("flex flex-col border-r bg-card", selectedUserId ? "hidden md:flex" : "flex")}>
         <div className="p-4">
           <form>
             <div className="relative">
@@ -254,10 +256,14 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
           </nav>
         </ScrollArea>
       </div>
-      <div className="flex flex-col">
+      <div className={cn("flex-col", selectedUserId ? "flex" : "hidden", "md:flex")}>
         {selectedUser ? (
           <>
             <div className="flex items-center gap-4 p-4 border-b">
+                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => router.push('/dashboard/chat')}>
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="sr-only">Back to contacts</span>
+                </Button>
                 <Avatar className="h-10 w-10">
                     <AvatarImage src={selectedUser.avatarUrl} alt={selectedUser.name} />
                     <AvatarFallback>{selectedUser.name.charAt(0)}</AvatarFallback>
@@ -332,7 +338,7 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
             </div>
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center">
+          <div className="hidden flex-1 items-center justify-center md:flex">
             <div className="text-center">
               <p className="text-xl font-medium">Select a contact to start chatting</p>
               <p className="text-muted-foreground">Your conversations will appear here.</p>
