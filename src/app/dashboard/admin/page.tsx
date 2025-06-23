@@ -92,7 +92,8 @@ export default function AdminDashboard() {
             throw new Error(data.message || "Failed to delete user.");
         }
 
-    } catch (err: any)         toast({
+    } catch (err: any) {
+        toast({
             title: "Error Deleting User",
             description: err.message,
             variant: 'destructive',
