@@ -27,29 +27,37 @@ interface OnboardingFormProps {
 
 // Create a dynamic schema based on user role
 const createFormSchema = (role: User['role']) => {
-    let schema = z.object({
+    const baseSchema = {
         name: z.string().min(2, "Name must be at least 2 characters."),
         bio: z.string().min(20, "Bio must be at least 20 characters.").max(500, "Bio must not exceed 500 characters."),
-        startupName: z.string().optional(),
-        startupDescription: z.string().optional(),
-        investmentInterests: z.string().optional(),
-    });
+    };
 
     if (role === 'entrepreneur') {
-        schema = schema.extend({
+        return z.object({
+            ...baseSchema,
             startupName: z.string().min(2, "Startup name is required."),
             startupDescription: z.string().min(20, "Startup description must be at least 20 characters."),
+            investmentInterests: z.string().optional(),
         });
     }
 
     if (role === 'investor') {
-        schema = schema.extend({
+        return z.object({
+            ...baseSchema,
             investmentInterests: z.string().min(3, "Please list at least one investment interest."),
+            startupName: z.string().optional(),
+            startupDescription: z.string().optional(),
         });
     }
 
-    return schema;
-}
+    // Fallback for any other case
+    return z.object({
+        ...baseSchema,
+        startupName: z.string().optional(),
+        startupDescription: z.string().optional(),
+        investmentInterests: z.string().optional(),
+    });
+};
 
 
 export function OnboardingForm({ user }: OnboardingFormProps) {
