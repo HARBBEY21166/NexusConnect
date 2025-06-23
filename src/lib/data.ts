@@ -13,6 +13,7 @@ export const users: User[] = [
       { name: 'Innovate Inc.', url: '#' },
       { name: 'FinTech Solutions', url: '#' },
     ],
+    bookmarkedProfiles: [],
   },
   {
     id: '2',
@@ -25,6 +26,7 @@ export const users: User[] = [
     startupDescription: 'A revolutionary AI-powered platform designed to enhance professional networking by suggesting meaningful connections based on skills, experience, and career goals.',
     fundingNeeds: '$500,000 for 10% equity. Funds will be used for marketing and scaling our engineering team.',
     pitchDeckUrl: '#',
+    bookmarkedProfiles: [],
   },
   {
     id: '3',
@@ -38,6 +40,7 @@ export const users: User[] = [
       { name: 'QuantumLeap', url: '#' },
       { name: 'Solaris', url: '#' },
     ],
+    bookmarkedProfiles: [],
   },
   {
     id: '4',
@@ -50,6 +53,7 @@ export const users: User[] = [
     startupDescription: 'A mobile-first platform that uses AI to create personalized fitness and nutrition plans, connecting users with certified coaches and a supportive community.',
     fundingNeeds: '$1.2M for clinical trials and market expansion.',
     pitchDeckUrl: '#',
+    bookmarkedProfiles: [],
   },
     {
     id: '5',
@@ -62,6 +66,7 @@ export const users: User[] = [
     startupDescription: 'EcoTrack scans product barcodes to provide a comprehensive sustainability score, empowering consumers to make environmentally conscious choices.',
     fundingNeeds: '$300,000 for product development and user acquisition.',
     pitchDeckUrl: '#',
+    bookmarkedProfiles: [],
   },
    {
     id: '6',
@@ -75,6 +80,7 @@ export const users: User[] = [
       { name: 'ShopEasy', url: '#' },
       { name: 'DirectStyle', url: '#' },
     ],
+    bookmarkedProfiles: [],
   },
   {
     id: '7',
@@ -88,6 +94,7 @@ export const users: User[] = [
       { name: 'QuickShip', url: '#' },
       { name: 'MarketGrid', url: '#' }
     ],
+    bookmarkedProfiles: [],
   },
   {
     id: '8',
@@ -100,6 +107,7 @@ export const users: User[] = [
     startupDescription: 'A real-time collaborative whiteboard and project management tool designed for distributed teams to brainstorm and execute ideas seamlessly.',
     fundingNeeds: '$750,000 to expand our feature set and integrate with other platforms.',
     pitchDeckUrl: '#',
+    bookmarkedProfiles: [],
   },
   {
     id: '9',
@@ -113,6 +121,7 @@ export const users: User[] = [
         { name: 'Cognitive AI', url: '#' },
         { name: 'SalesFlow', url: '#' }
     ],
+    bookmarkedProfiles: [],
   },
   {
     id: '10',
@@ -125,5 +134,6 @@ export const users: User[] = [
     startupDescription: 'We create delicious, plant-based alternatives to meat products using a proprietary fermentation process. Our mission is to reduce the environmental impact of the food industry.',
     fundingNeeds: '$2M for a new production facility and retail distribution.',
     pitchDeckUrl: '#',
+    bookmarkedProfiles: [],
   }
 ];
