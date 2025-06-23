@@ -1,11 +1,18 @@
 
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 
 export async function sendCollaborationAcceptedEmail(to: string, investorName: string, entrepreneurName: string, entrepreneurId: string) {
+    if (!resend) {
+        console.warn("Resend API key not configured. Skipping collaboration acceptance email.");
+        return;
+    }
+
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
     try {
         await resend.emails.send({
@@ -28,6 +35,10 @@ export async function sendCollaborationAcceptedEmail(to: string, investorName: s
 }
 
 export async function sendNewMessageEmail(to: string, receiverName: string, senderName: string, senderId: string) {
+    if (!resend) {
+        console.warn("Resend API key not configured. Skipping new message email.");
+        return;
+    }
      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
     try {
         await resend.emails.send({
@@ -49,6 +60,11 @@ export async function sendNewMessageEmail(to: string, receiverName: string, send
 }
 
 export async function sendPasswordResetEmail(to: string, name: string, token: string) {
+    if (!resend) {
+        console.error("Resend API key not configured. Cannot send password reset email.");
+        throw new Error("Could not send password reset email.");
+    }
+
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
     const resetLink = `${appUrl}/reset-password?token=${token}`;
     try {

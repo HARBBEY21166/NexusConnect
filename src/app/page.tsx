@@ -45,7 +45,7 @@ export default function Home() {
                 </div>
               </div>
               <Image
-                src="https://i.pinimg.com/736x/3f/03/e3/3f03e3729367070cc115dd539f3795f3.jpg"
+                src="https://i.pinimg.com/736x/52/c1/4c/52c14c33cad5209fecb0bfb09efb803a.jpg"
                 width="600"
                 height="400"
                 alt="Hero"
