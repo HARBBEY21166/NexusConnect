@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
         }
         
-        const bookmarks = user.bookmarkedProfiles?.map((profile: any) => {
+        const bookmarks = (user.bookmarkedProfiles || []).map((profile: any) => {
              profile.id = profile._id.toString();
              delete profile._id;
              delete profile.__v;
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
              return profile;
         })
 
-        return NextResponse.json({ success: true, bookmarks }, { status: 200 });
+        return NextResponse.json({ success: true, bookmarks: bookmarks }, { status: 200 });
 
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
