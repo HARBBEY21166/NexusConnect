@@ -87,7 +87,7 @@ export async function POST(request: NextRequest, { params }: { params: { otherUs
         const receiver = await UserModel.findById(receiverId);
 
         if (sender && receiver && receiver.email) {
-            await sendNewMessageEmail(receiver.email, receiver.name, sender.name, sender._id.toString());
+            await sendNewMessageEmail(receiver.email, receiver.name, sender.name, sender.id);
         }
 
 

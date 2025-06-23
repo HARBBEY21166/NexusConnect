@@ -48,7 +48,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
             const entrepreneur = await UserModel.findById(collaborationRequest.entrepreneurId);
 
             if (investor && entrepreneur && investor.email) {
-                await sendCollaborationAcceptedEmail(investor.email, investor.name, entrepreneur.name, entrepreneur._id.toString());
+                await sendCollaborationAcceptedEmail(investor.email, investor.name, entrepreneur.name, entrepreneur.id);
             }
         }
 
