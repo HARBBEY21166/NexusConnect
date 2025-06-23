@@ -15,6 +15,7 @@ export type User = {
   fundingNeeds?: string;
   pitchDeckUrl?: string;
   investmentInterests?: string[];
+  bookmarkedProfiles: string[];
   portfolioCompanies?: { name: string; url: string }[];
 };
 
