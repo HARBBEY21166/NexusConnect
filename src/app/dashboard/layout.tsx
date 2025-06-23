@@ -13,6 +13,7 @@ import {
   Menu,
   Moon,
   Sun,
+  Bookmark
 } from "lucide-react";
 import {
   SidebarProvider,
@@ -87,6 +88,16 @@ function DashboardNav({ user }: { user: User }) {
             <Link href="/dashboard/investor">
               <Search />
                {user.role === 'admin' ? 'All Entrepreneurs' : 'Discover Entrepreneurs'}
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
+       {(user.role === 'investor' || user.role === 'entrepreneur') && (
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild isActive={pathname === '/dashboard/bookmarks'}>
+            <Link href="/dashboard/bookmarks">
+              <Bookmark />
+              Bookmarks
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -168,6 +179,15 @@ function MobileNav({ user }: { user: User }) {
             >
               <Search className="h-5 w-5" />
               {user.role === 'admin' ? 'All Entrepreneurs' : 'Discover Entrepreneurs'}
+            </Link>
+          )}
+          {(user.role === 'investor' || user.role === 'entrepreneur') && (
+             <Link
+              href="/dashboard/bookmarks"
+               className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground", { "bg-muted text-foreground": pathname === '/dashboard/bookmarks' })}
+            >
+              <Bookmark className="h-5 w-5" />
+              Bookmarks
             </Link>
           )}
            <Link

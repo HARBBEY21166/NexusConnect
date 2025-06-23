@@ -6,12 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useBookmarks } from "@/hooks/use-bookmarks";
 
 export default function InvestorDashboard() {
   const [entrepreneurs, setEntrepreneurs] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
+  const { bookmarkedIds, toggleBookmark } = useBookmarks();
 
   useEffect(() => {
     const fetchEntrepreneurs = async () => {
@@ -71,7 +73,12 @@ export default function InvestorDashboard() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {entrepreneurs.length > 0 ? (
                 entrepreneurs.map(entrepreneur => (
-                    <EntrepreneurCard key={entrepreneur.id} entrepreneur={entrepreneur} />
+                    <EntrepreneurCard 
+                      key={entrepreneur.id} 
+                      entrepreneur={entrepreneur}
+                      isBookmarked={bookmarkedIds.has(entrepreneur.id)}
+                      onToggleBookmark={toggleBookmark}
+                    />
                 ))
             ) : (
                 <div className="col-span-full text-center text-muted-foreground">

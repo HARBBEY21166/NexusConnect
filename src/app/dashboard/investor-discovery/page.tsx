@@ -9,6 +9,7 @@ import { User } from "@/lib/types";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useBookmarks } from "@/hooks/use-bookmarks";
 
 export default function InvestorDiscoveryPage() {
   const [investors, setInvestors] = useState<User[]>([]);
@@ -19,6 +20,7 @@ export default function InvestorDiscoveryPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { bookmarkedIds, toggleBookmark } = useBookmarks();
 
   const selectedInterests = useMemo(() => {
     const interests = searchParams.get('interests');
@@ -150,7 +152,12 @@ export default function InvestorDiscoveryPage() {
              <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
                 {investors.length > 0 ? (
                     investors.map(investor => (
-                        <InvestorCard key={investor.id} investor={investor} />
+                        <InvestorCard 
+                          key={investor.id} 
+                          investor={investor}
+                          isBookmarked={bookmarkedIds.has(investor.id)}
+                          onToggleBookmark={toggleBookmark}
+                        />
                     ))
                 ) : (
                     <div className="col-span-full text-center text-muted-foreground py-12">

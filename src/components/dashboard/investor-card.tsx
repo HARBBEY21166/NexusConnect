@@ -11,27 +11,38 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, MessageSquare } from "lucide-react";
+import { ArrowUpRight, MessageSquare, Bookmark } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface InvestorCardProps {
   investor: User;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (id: string) => void;
 }
 
-export function InvestorCard({ investor }: InvestorCardProps) {
+export function InvestorCard({ investor, isBookmarked, onToggleBookmark }: InvestorCardProps) {
   if (investor.role !== 'investor') return null;
 
   return (
     <Card className="flex flex-col">
-      <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={investor.avatarUrl} alt={investor.name} />
-          <AvatarFallback>{investor.name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div>
-          <CardTitle>{investor.name}</CardTitle>
-          <CardDescription>Ventur Capitalist</CardDescription>
+       <CardHeader className="flex flex-row items-start gap-4">
+        <div className="flex flex-row items-center gap-4 flex-1">
+            <Avatar className="h-12 w-12">
+            <AvatarImage src={investor.avatarUrl} alt={investor.name} />
+            <AvatarFallback>{investor.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+            <CardTitle>{investor.name}</CardTitle>
+            <CardDescription>Venture Capitalist</CardDescription>
+            </div>
         </div>
+        {onToggleBookmark && (
+          <Button variant="ghost" size="icon" className="shrink-0" onClick={() => onToggleBookmark(investor.id)}>
+              <Bookmark className={cn("h-5 w-5", isBookmarked && "fill-primary text-primary")} />
+              <span className="sr-only">Bookmark</span>
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <p className="text-sm text-muted-foreground line-clamp-3">

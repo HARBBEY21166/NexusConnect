@@ -58,6 +58,10 @@ const UserSchema = new Schema<UserDocument>({
     portfolioCompanies: {
         type: [PortfolioCompanySchema],
     },
+    bookmarkedProfiles: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }, {
     timestamps: true,
     toJSON: {
