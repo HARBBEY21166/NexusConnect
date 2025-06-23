@@ -7,6 +7,8 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { sendNewMessageEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 // Get messages for a conversation
 export async function GET(request: NextRequest, { params }: { params: { otherUserId: string } }) {
     await dbConnect();

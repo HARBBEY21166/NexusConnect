@@ -4,6 +4,8 @@ import UserModel from '@/models/User.model';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 // Get all bookmarked profiles for the current user
 export async function GET(request: NextRequest) {
     await dbConnect();

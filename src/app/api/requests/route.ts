@@ -1,8 +1,11 @@
+
 import dbConnect from '@/lib/db';
 import RequestModel from '@/models/Request.model';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 import UserModel from '@/models/User.model';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
     await dbConnect();
