@@ -22,9 +22,16 @@ export async function GET(request: NextRequest) {
             ];
         }
 
-        const entrepreneurs = await UserModel.find(query);
+        const entrepreneursFromDB = await UserModel.find(query);
+        let entrepreneurs = entrepreneursFromDB.map(e => e.toObject());
+
+        // If the database is empty and there's no active search, fall back to mock data
+        if (entrepreneurs.length === 0 && !search) {
+            const { users: mockUsers } = await import('@/lib/data');
+            entrepreneurs = mockUsers.filter(u => u.role === 'entrepreneur');
+        }
         
-        return NextResponse.json({ success: true, entrepreneurs: entrepreneurs.map(e => e.toObject()) }, { status: 200 });
+        return NextResponse.json({ success: true, entrepreneurs }, { status: 200 });
     } catch (error) {
         console.error('Error fetching entrepreneurs:', error);
         return NextResponse.json(

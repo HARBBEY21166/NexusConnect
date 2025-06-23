@@ -76,4 +76,54 @@ export const users: User[] = [
       { name: 'DirectStyle', url: '#' },
     ],
   },
+  {
+    id: '7',
+    name: 'George Lucas',
+    email: 'george@example.com',
+    role: 'investor',
+    avatarUrl: 'https://placehold.co/100x100.png',
+    bio: 'Focused on scaling e-commerce and marketplace businesses. I bring operational expertise and a network of industry contacts.',
+    investmentInterests: ['E-commerce', 'Marketplaces', 'Logistics', 'B2C'],
+    portfolioCompanies: [
+      { name: 'QuickShip', url: '#' },
+      { name: 'MarketGrid', url: '#' }
+    ],
+  },
+  {
+    id: '8',
+    name: 'Hannah Montana',
+    email: 'hannah@example.com',
+    role: 'entrepreneur',
+    avatarUrl: 'https://placehold.co/100x100.png',
+    bio: 'Building the future of remote work collaboration tools.',
+    startupName: 'SyncUp',
+    startupDescription: 'A real-time collaborative whiteboard and project management tool designed for distributed teams to brainstorm and execute ideas seamlessly.',
+    fundingNeeds: '$750,000 to expand our feature set and integrate with other platforms.',
+    pitchDeckUrl: '#',
+  },
+  {
+    id: '9',
+    name: 'Ivy Green',
+    email: 'ivy@example.com',
+    role: 'investor',
+    avatarUrl: 'https://placehold.co/100x100.png',
+    bio: 'Ex-founder with a passion for funding the next generation of AI-driven B2B SaaS companies.',
+    investmentInterests: ['AI', 'SaaS', 'B2B', 'Machine Learning'],
+    portfolioCompanies: [
+        { name: 'Cognitive AI', url: '#' },
+        { name: 'SalesFlow', url: '#' }
+    ],
+  },
+  {
+    id: '10',
+    name: 'Jack Sparrow',
+    email: 'jack@example.com',
+    role: 'entrepreneur',
+    avatarUrl: 'https://placehold.co/100x100.png',
+    bio: 'Disrupting the food tech industry with sustainable solutions.',
+    startupName: 'FutureFoods',
+    startupDescription: 'We create delicious, plant-based alternatives to meat products using a proprietary fermentation process. Our mission is to reduce the environmental impact of the food industry.',
+    fundingNeeds: '$2M for a new production facility and retail distribution.',
+    pitchDeckUrl: '#',
+  }
 ];
