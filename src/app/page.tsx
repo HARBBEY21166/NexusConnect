@@ -13,7 +13,7 @@ export default function Home() {
           <span className="sr-only">NexusConnect</span>
         </Link>
         <h1 className="ml-4 text-2xl font-bold text-foreground">NexusConnect</h1>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto items-center flex gap-4 sm:gap-6">
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
             Login
           </Link>
