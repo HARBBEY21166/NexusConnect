@@ -14,7 +14,6 @@ NexusConnect is a dynamic, full-stack platform designed to bridge the gap betwee
 - **Comprehensive Profile Management**:
   - Users can view and edit their profiles, including bio, startup details, and investment interests.
   - Direct avatar uploads from the user's device.
-  - **AI Profile Polishing**: Entrepreneurs can use a Genkit-powered AI tool to optimize their bio for investor appeal.
 - **Collaboration System**: Investors can send collaboration requests, and entrepreneurs can accept or reject them.
 - **Direct Messaging**: A built-in chat system allows for real-time communication between users.
 - **Profile Bookmarking**: Users can save interesting profiles to a personal "Bookmarks" page for easy access later.
@@ -29,7 +28,6 @@ NexusConnect is a dynamic, full-stack platform designed to bridge the gap betwee
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [ShadCN UI](https://ui.shadcn.com/)
-- **AI Integration**: [Genkit](https://firebase.google.com/docs/genkit) (for profile optimization)
 - **Database**: [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)
 - **Authentication**: [JWT](https://jwt.io/), [bcrypt.js](https://github.com/dcodeIO/bcrypt.js)
 - **Form Management**: [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
@@ -95,11 +93,10 @@ The application should now be running on [http://localhost:9002](http://localhos
 
 ## 📸 Screenshots
 
-*(Add screenshots of your application here to showcase its features)*
 
-| Login Page                               | Entrepreneur Dashboard                     |
+| Login Page                               | Admin Dashboard                     |
 | ---------------------------------------- | ------------------------------------------ |
-| ![Login](https://placehold.co/600x400.png) | ![Dashboard](https://placehold.co/600x400.png) |
+| ![Login](./src/app/public/login.png) | ![Dashboard](./src/app/public/Dashboard.png) |
 
 | Investor Discovery                           | Profile Page                               |
 | -------------------------------------------- | ------------------------------------------ |
