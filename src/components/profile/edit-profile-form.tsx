@@ -19,6 +19,7 @@ import { User } from "@/lib/types";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface EditProfileFormProps {
   user: User;
@@ -27,7 +28,7 @@ interface EditProfileFormProps {
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
-  avatarUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  avatarUrl: z.string().optional(),
   bio: z.string().min(10, "Bio must be at least 10 characters.").max(500, "Bio must not exceed 500 characters."),
   // Entrepreneur fields
   startupName: z.string().optional(),
@@ -109,10 +110,39 @@ export function EditProfileForm({ user, onUpdateSuccess }: EditProfileFormProps)
           name="avatarUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Avatar URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://example.com/avatar.png" {...field} />
-              </FormControl>
+              <FormLabel>Avatar</FormLabel>
+                <div className="flex items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                        <AvatarImage src={field.value} alt={user.name} />
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <FormControl>
+                        <Input
+                            type="file"
+                            accept="image/png, image/jpeg, image/gif"
+                            className="flex-1"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                                        toast({
+                                            title: "File too large",
+                                            description: "Please select an image smaller than 2MB.",
+                                            variant: "destructive",
+                                        });
+                                        e.target.value = ''; // Reset the file input
+                                        return;
+                                    }
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        field.onChange(reader.result as string);
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            }}
+                        />
+                    </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
