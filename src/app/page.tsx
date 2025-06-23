@@ -75,7 +75,7 @@ export default function Home() {
                 </div>
               </div>
               <Image
-                src="https://i.pinimg.com/originals/e8/35/88/e8358897a22956a1b2413e313c015797.jpg"
+                src="https://i.pinimg.com/736x/52/c1/4c/52c14c33cad5209fecb0bfb09efb803a.jpg"
                 width="600"
                 height="400"
                 alt="Hero"
