@@ -32,7 +32,7 @@ export function EntrepreneurCard({ entrepreneur }: EntrepreneurCardProps) {
           <CardDescription>{entrepreneur.startupName}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex-grow">
+      <CardContent className="flex-grow space-y-4">
         <p className="text-sm text-muted-foreground line-clamp-3">
             {entrepreneur.startupDescription}
         </p>

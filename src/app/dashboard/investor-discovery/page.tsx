@@ -124,7 +124,7 @@ export default function InvestorDiscoveryPage() {
         </div>
 
         {isLoading && (
-            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
             {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex flex-col space-y-3 p-4 border rounded-lg bg-card">
                     <div className="flex items-center space-x-4">
@@ -147,7 +147,7 @@ export default function InvestorDiscoveryPage() {
         {error && <p className="text-destructive">{error}</p>}
 
         {!isLoading && !error && (
-             <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+             <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
                 {investors.length > 0 ? (
                     investors.map(investor => (
                         <InvestorCard key={investor.id} investor={investor} />

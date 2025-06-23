@@ -30,7 +30,7 @@ export function InvestorCard({ investor }: InvestorCardProps) {
         </Avatar>
         <div>
           <CardTitle>{investor.name}</CardTitle>
-          <CardDescription>Venture Capitalist</CardDescription>
+          <CardDescription>Ventur Capitalist</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
