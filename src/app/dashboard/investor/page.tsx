@@ -7,6 +7,8 @@ import { User } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { AnalyticsCard } from "@/components/dashboard/analytics-card";
+import { Send, BarChart, Bookmark as BookmarkIcon } from "lucide-react";
 
 export default function InvestorDashboard() {
   const [entrepreneurs, setEntrepreneurs] = useState<User[]>([]);
@@ -15,28 +17,46 @@ export default function InvestorDashboard() {
   const searchParams = useSearchParams();
   const { bookmarkedIds, toggleBookmark } = useBookmarks();
 
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(true);
+
   useEffect(() => {
-    const fetchEntrepreneurs = async () => {
+    const fetchPageData = async () => {
       setIsLoading(true);
+      setIsAnalyticsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/entrepreneurs?${searchParams.toString()}`);
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-          setEntrepreneurs(data.entrepreneurs);
+         // Fetch entrepreneurs
+        const entrepreneursResponse = await fetch(`/api/entrepreneurs?${searchParams.toString()}`);
+        const entrepreneursData = await entrepreneursResponse.json();
+        if (entrepreneursResponse.ok && entrepreneursData.success) {
+          setEntrepreneurs(entrepreneursData.entrepreneurs);
         } else {
-          setError(data.message || "Failed to fetch entrepreneurs.");
+           setError(entrepreneursData.message || "Failed to fetch entrepreneurs.");
+        }
+        setIsLoading(false);
+
+        // Fetch analytics
+        const authDataString = localStorage.getItem("nexus-auth");
+        if (authDataString) {
+            const { token } = JSON.parse(authDataString);
+            const analyticsResponse = await fetch('/api/analytics', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const analyticsData = await analyticsResponse.json();
+            if (analyticsResponse.ok && analyticsData.success) {
+                setAnalytics(analyticsData.analytics);
+            }
         }
       } catch (err) {
         setError("An unexpected error occurred.");
         console.error(err);
       } finally {
-        setIsLoading(false);
+        setIsAnalyticsLoading(false);
       }
     };
 
-    fetchEntrepreneurs();
+    fetchPageData();
   }, [searchParams]);
 
   return (
@@ -44,6 +64,27 @@ export default function InvestorDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold font-headline">Discover Entrepreneurs</h1>
         <p className="text-muted-foreground">Browse profiles of innovative founders seeking investment.</p>
+      </div>
+
+       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+        <AnalyticsCard
+            title="Requests Sent"
+            value={analytics?.requestsSent ?? 0}
+            icon={<Send className="h-4 w-4" />}
+            isLoading={isAnalyticsLoading}
+        />
+        <AnalyticsCard
+            title="Acceptance Rate"
+            value={`${analytics?.acceptanceRate ?? 0}%`}
+            icon={<BarChart className="h-4 w-4" />}
+            isLoading={isAnalyticsLoading}
+        />
+        <AnalyticsCard
+            title="Bookmarked"
+            value={analytics?.bookmarkedProfiles ?? 0}
+            icon={<BookmarkIcon className="h-4 w-4" />}
+            isLoading={isAnalyticsLoading}
+        />
       </div>
 
       {isLoading && (
@@ -67,7 +108,7 @@ export default function InvestorDashboard() {
         </div>
       )}
 
-      {error && <p className="text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-center py-4">{error}</p>}
 
       {!isLoading && !error && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -81,7 +122,7 @@ export default function InvestorDashboard() {
                     />
                 ))
             ) : (
-                <div className="col-span-full text-center text-muted-foreground">
+                <div className="col-span-full text-center text-muted-foreground py-12">
                     <p>No entrepreneurs found.</p>
                     {searchParams.has('q') && <p>Try adjusting your search terms.</p>}
                 </div>

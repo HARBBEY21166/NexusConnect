@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { AnalyticsCard } from "@/components/dashboard/analytics-card";
+import { Handshake, CheckCircle, Hourglass } from "lucide-react";
 
 export default function EntrepreneurDashboard() {
   const [requests, setRequests] = useState<CollaborationRequest[]>([]);
@@ -14,38 +16,53 @@ export default function EntrepreneurDashboard() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const fetchRequests = async () => {
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [isAnalyticsLoading, setIsAnalyticsLoading] = useState(true);
+
+  const fetchDashboardData = async () => {
     setIsLoading(true);
+    setIsAnalyticsLoading(true);
     setError(null);
+    
     try {
       const authDataString = localStorage.getItem("nexus-auth");
       if (!authDataString) {
         throw new Error("Authentication not found.");
       }
       const { token } = JSON.parse(authDataString);
+      const headers = { 'Authorization': `Bearer ${token}` };
 
-      const response = await fetch('/api/requests', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
+      const [requestsResponse, analyticsResponse] = await Promise.all([
+        fetch('/api/requests', { headers }),
+        fetch('/api/analytics', { headers })
+      ]);
 
-      if (response.ok && data.success) {
-        setRequests(data.requests);
+      const requestsData = await requestsResponse.json();
+      if (requestsResponse.ok && requestsData.success) {
+        setRequests(requestsData.requests);
       } else {
-        setError(data.message || "Failed to fetch requests.");
+        setError(requestsData.message || "Failed to fetch requests.");
       }
-    } catch (err) {
-      setError("An unexpected error occurred.");
+
+      const analyticsData = await analyticsResponse.json();
+       if (analyticsResponse.ok && analyticsData.success) {
+        setAnalytics(analyticsData.analytics);
+      } else {
+        // Don't throw an error for analytics, just log it
+        console.error("Failed to fetch analytics:", analyticsData.message);
+      }
+
+    } catch (err: any) {
+      setError(err.message);
       console.error(err);
     } finally {
       setIsLoading(false);
+      setIsAnalyticsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchRequests();
+    fetchDashboardData();
   }, []);
 
   const handleRequestUpdate = () => {
@@ -53,15 +70,37 @@ export default function EntrepreneurDashboard() {
       title: "Request Updated",
       description: "The collaboration request status has been changed.",
     });
-    fetchRequests(); // Re-fetch requests after an update
+    fetchDashboardData(); // Re-fetch all data after an update
   };
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-headline">Collaboration Requests</h1>
-        <p className="text-muted-foreground">Manage interest from potential investors.</p>
+        <h1 className="text-3xl font-bold font-headline">Entrepreneur Dashboard</h1>
+        <p className="text-muted-foreground">Track your engagement and manage incoming requests.</p>
       </div>
+
+       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
+        <AnalyticsCard
+          title="Total Requests"
+          value={analytics?.totalRequests ?? 0}
+          icon={<Handshake className="h-4 w-4" />}
+          isLoading={isAnalyticsLoading}
+        />
+        <AnalyticsCard
+          title="Accepted"
+          value={analytics?.accepted ?? 0}
+          icon={<CheckCircle className="h-4 w-4 text-green-500" />}
+          isLoading={isAnalyticsLoading}
+        />
+        <AnalyticsCard
+          title="Pending"
+          value={analytics?.pending ?? 0}
+          icon={<Hourglass className="h-4 w-4 text-yellow-500" />}
+          isLoading={isAnalyticsLoading}
+        />
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Incoming Requests</CardTitle>
@@ -102,7 +141,7 @@ export default function EntrepreneurDashboard() {
                   <RequestItem key={request.id} request={request} onUpdate={handleRequestUpdate} />
                 ))
               ) : (
-                <p className="text-muted-foreground">You have no incoming collaboration requests yet.</p>
+                <p className="text-center py-8 text-muted-foreground">You have no incoming collaboration requests yet.</p>
               )}
             </div>
           )}
