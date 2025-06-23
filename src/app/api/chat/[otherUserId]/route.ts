@@ -5,6 +5,7 @@ import UserModel from '@/models/User.model';
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { sendNewMessageEmail } from '@/lib/email';
 
 // Get messages for a conversation
 export async function GET(request: NextRequest, { params }: { params: { otherUserId: string } }) {
@@ -78,6 +79,14 @@ export async function POST(request: NextRequest, { params }: { params: { otherUs
         const populatedMessage = await MessageModel.findById(newMessage._id)
             .populate({ path: 'senderId', model: UserModel, select: 'name avatarUrl _id' })
             .populate({ path: 'receiverId', model: UserModel, select: 'name avatarUrl _id' });
+        
+        // Send email notification
+        const sender = await UserModel.findById(senderId);
+        const receiver = await UserModel.findById(receiverId);
+
+        if (sender && receiver && receiver.email) {
+            await sendNewMessageEmail(receiver.email, receiver.name, sender.name, sender._id.toString());
+        }
 
 
         return NextResponse.json({ success: true, message: populatedMessage }, { status: 201 });

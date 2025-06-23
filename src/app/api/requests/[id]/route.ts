@@ -3,6 +3,7 @@ import RequestModel from '@/models/Request.model';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 import UserModel from '@/models/User.model';
+import { sendCollaborationAcceptedEmail } from '@/lib/email';
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     await dbConnect();
@@ -40,6 +41,16 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
         collaborationRequest.status = status;
         await collaborationRequest.save();
+
+        // Send email notification if accepted
+        if (status === 'accepted') {
+            const investor = await UserModel.findById(collaborationRequest.investorId);
+            const entrepreneur = await UserModel.findById(collaborationRequest.entrepreneurId);
+
+            if (investor && entrepreneur && investor.email) {
+                await sendCollaborationAcceptedEmail(investor.email, investor.name, entrepreneur.name, entrepreneur._id.toString());
+            }
+        }
 
         return NextResponse.json({ success: true, message: 'Request updated successfully.', request: collaborationRequest }, { status: 200 });
 
