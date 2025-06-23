@@ -146,7 +146,7 @@ function MobileNav({ user }: { user: User }) {
       <SheetContent side="left" className="flex flex-col">
         <nav className="grid gap-2 text-lg font-medium">
           <Link
-            href="#"
+            href={dashboardPath}
             className="flex items-center gap-2 text-lg font-semibold mb-4"
           >
             <Handshake className="h-6 w-6 text-primary" />
@@ -360,6 +360,8 @@ export default function DashboardLayout({
     // This can happen briefly before the redirect to /login
     return null;
   }
+  
+  const dashboardPath = user.role === 'admin' ? '/dashboard/admin' : `/dashboard/${user.role}`;
 
   return (
     <SidebarProvider>
@@ -367,7 +369,7 @@ export default function DashboardLayout({
             <div className="hidden md:block">
               <Sidebar>
                 <SidebarHeader>
-                  <Link href="#" className="flex items-center gap-2 font-semibold">
+                  <Link href={dashboardPath} className="flex items-center gap-2 font-semibold">
                     <Handshake className="h-6 w-6 text-primary" />
                     <span>NexusConnect</span>
                   </Link>

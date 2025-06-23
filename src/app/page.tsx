@@ -1,19 +1,24 @@
+
+"use client";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Rocket, Briefcase, MessageSquare, Handshake } from 'lucide-react';
+import { Rocket, Briefcase, MessageSquare, Handshake, Menu as MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <header className="px-4 lg:px-6 h-16 flex items-center bg-card border-b">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
+      <header className="px-4 lg:px-6 h-16 flex items-center bg-card border-b sticky top-0 z-50">
+        <Link href="/" className="flex items-center justify-center" prefetch={false}>
           <Handshake className="h-6 w-6 text-primary" />
           <span className="sr-only">NexusConnect</span>
         </Link>
         <h1 className="ml-4 text-2xl font-bold text-foreground">NexusConnect</h1>
-        <nav className="ml-auto items-center flex gap-4 sm:gap-6">
+        {/* Desktop Navigation */}
+        <nav className="ml-auto hidden lg:flex items-center gap-4 sm:gap-6">
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
             Login
           </Link>
@@ -21,6 +26,31 @@ export default function Home() {
             <Link href="/register" prefetch={false}>Register</Link>
           </Button>
         </nav>
+        {/* Mobile Menu */}
+        <div className="lg:hidden ml-auto">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MenuIcon className="h-6 w-6" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+                <nav className="grid gap-6 text-lg font-medium p-6">
+                    <Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
+                        <Handshake className="h-6 w-6 text-primary" />
+                        <span>NexusConnect</span>
+                    </Link>
+                    <Link href="/login" className="text-muted-foreground hover:text-foreground">
+                        Login
+                    </Link>
+                    <Link href="/register" className="text-muted-foreground hover:text-foreground">
+                        Register
+                    </Link>
+                </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -40,12 +70,12 @@ export default function Home() {
                     <Link href="/register" prefetch={false}>Get Started</Link>
                   </Button>
                   <Button asChild variant="outline" size="lg">
-                    <Link href="#features" prefetch={false}>Learn More</Link>
+                    <a href="#features">Learn More</a>
                   </Button>
                 </div>
               </div>
               <Image
-                src="https://i.pinimg.com/736x/52/c1/4c/52c14c33cad5209fecb0bfb09efb803a.jpg"
+                src="https://placehold.co/600x400.png"
                 width="600"
                 height="400"
                 alt="Hero"
@@ -115,10 +145,10 @@ export default function Home() {
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-muted-foreground">&copy; 2024 NexusConnect. All rights reserved.</p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+          <Link href="/" className="text-xs hover:underline underline-offset-4" prefetch={false}>
             Terms of Service
           </Link>
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+          <Link href="/" className="text-xs hover:underline underline-offset-4" prefetch={false}>
             Privacy
           </Link>
         </nav>
