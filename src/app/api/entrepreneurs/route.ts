@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     try {
         const { searchParams } = new URL(request.url);
-        const search = searchParams.get('search');
+        const search = searchParams.get('q');
 
         // 1. Fetch all entrepreneurs from the database
         const entrepreneursFromDB = await UserModel.find({ role: 'entrepreneur' });

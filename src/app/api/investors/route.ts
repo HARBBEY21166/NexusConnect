@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     try {
         const { searchParams } = new URL(request.url);
-        const search = searchParams.get('search');
+        const search = searchParams.get('q');
         const interests = searchParams.get('interests');
 
         // 1. Fetch all investors from the database

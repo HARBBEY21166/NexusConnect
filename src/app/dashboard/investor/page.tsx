@@ -12,14 +12,13 @@ export default function InvestorDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get('q');
 
   useEffect(() => {
     const fetchEntrepreneurs = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/entrepreneurs${searchQuery ? `?search=${searchQuery}` : ''}`);
+        const response = await fetch(`/api/entrepreneurs?${searchParams.toString()}`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -36,7 +35,7 @@ export default function InvestorDashboard() {
     };
 
     fetchEntrepreneurs();
-  }, [searchQuery]);
+  }, [searchParams]);
 
   return (
     <div>
@@ -77,7 +76,7 @@ export default function InvestorDashboard() {
             ) : (
                 <div className="col-span-full text-center text-muted-foreground">
                     <p>No entrepreneurs found.</p>
-                    {searchQuery && <p>Try adjusting your search terms.</p>}
+                    {searchParams.has('q') && <p>Try adjusting your search terms.</p>}
                 </div>
             )}
         </div>
