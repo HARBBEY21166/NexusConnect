@@ -100,7 +100,7 @@ The application should now be running on [http://localhost:9002](http://localhos
 
 | Investor Discovery                           | Profile Page                               |
 | -------------------------------------------- | ------------------------------------------ |
-| ![Discovery](https://placehold.co/600x400.png) | ![Profile](https://placehold.co/600x400.png)   |
+| ![Discovery](./src/app/public/investordisc.png) | ![Profile](./src/app/public/profile.png)   |
 
 
 ---
