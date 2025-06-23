@@ -42,6 +42,10 @@ const UserSchema = new Schema<UserDocument>({
         type: String,
         default: '',
     },
+    hasCompletedOnboarding: {
+        type: Boolean,
+        default: false,
+    },
     startupName: {
         type: String,
     },

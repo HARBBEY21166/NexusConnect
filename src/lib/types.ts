@@ -9,6 +9,7 @@ export type User = {
   avatarUrl: string;
   bio: string;
   createdAt?: string;
+  hasCompletedOnboarding?: boolean;
   startupName?: string;
   startupDescription?: string;
   fundingNeeds?: string;

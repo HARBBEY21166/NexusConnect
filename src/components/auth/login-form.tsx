@@ -62,7 +62,12 @@ export function LoginForm() {
                     description: "Welcome back!",
                 });
 
-                router.push(`/dashboard/${data.user.role}`);
+                if (!data.user.hasCompletedOnboarding) {
+                    router.push('/onboarding');
+                } else {
+                    router.push(`/dashboard/${data.user.role}`);
+                }
+
             } else {
                 toast({
                     title: "Login Failed",
