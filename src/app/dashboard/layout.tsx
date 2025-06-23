@@ -107,6 +107,10 @@ function DashboardNav({ user }: { user: User }) {
           asChild
            isActive={pathname.startsWith(`/dashboard/profile/`)}
         >
+          <Link href={`/dashboard/profile/${user.role}/${user.id}`}>
+            <UserIcon />
+            Profile
+          </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>

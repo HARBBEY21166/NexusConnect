@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
     await dbConnect();
 

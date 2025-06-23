@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import UserModel from '@/models/User.model';
 import { sendCollaborationAcceptedEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     await dbConnect();
 

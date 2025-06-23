@@ -4,6 +4,8 @@ import UserModel from '@/models/User.model';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(request: NextRequest) {
     await dbConnect();
 

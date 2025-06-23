@@ -4,6 +4,8 @@ import UserModel from '@/models/User.model';
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
     await dbConnect();
 
