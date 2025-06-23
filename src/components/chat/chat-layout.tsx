@@ -126,8 +126,8 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
         if (data.success) {
           const formattedMessages = data.messages.map((msg: any) => ({
               id: msg._id,
-              senderId: msg.senderId._id,
-              receiverId: msg.receiverId._id,
+              senderId: msg.senderId.id,
+              receiverId: msg.receiverId.id,
               message: msg.message,
               timestamp: msg.createdAt,
               read: true,
@@ -186,8 +186,8 @@ export function ChatLayout({ selectedUserId }: ChatLayoutProps) {
             const returnedMsg = data.message;
             const formattedMessage = {
                  id: returnedMsg._id,
-                 senderId: returnedMsg.senderId._id,
-                 receiverId: returnedMsg.receiverId._id,
+                 senderId: returnedMsg.senderId.id,
+                 receiverId: returnedMsg.receiverId.id,
                  message: returnedMsg.message,
                  timestamp: returnedMsg.createdAt,
                  read: true,
